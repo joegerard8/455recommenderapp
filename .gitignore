@@ -1,0 +1,30 @@
+# Ignore node modules and build directories
+node_modules/
+dist/
+build/
+
+# Ignore dependency locks
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Ignore Vite cache
+.vite/
+
+# Ignore editor and OS-specific files
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+*.swp
+
+# Ignore TypeScript build artifacts (if applicable)
+*.tsbuildinfo
