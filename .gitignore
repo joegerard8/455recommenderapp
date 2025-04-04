@@ -28,3 +28,26 @@ Thumbs.db
 
 # Ignore TypeScript build artifacts (if applicable)
 *.tsbuildinfo
+
+# Ignore Python virtual environment
+venv/
+.env/
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Flask-related files
+instance/
+*.sqlite3
+db.sqlite3
+
+# Ignore Flask logs and caches
+*.log
+*.db
+.mypy_cache/
+.pytest_cache/
+.flaskenv
+
