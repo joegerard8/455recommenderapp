@@ -1,6 +1,11 @@
 import { useState } from "react";
 import "./App.css";
 
+type Recommendation = {
+  contentId: number;
+  title: string;
+};
+
 async function getRecommendations(type: string, itemId: string) {
   try {
     const response = await fetch(
@@ -10,7 +15,11 @@ async function getRecommendations(type: string, itemId: string) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ item_id: itemId }),
+        body: JSON.stringify(
+          type === "collaborative"
+            ? { person_id: itemId } // for collaborative
+            : { item_id: itemId }   // for content-based
+        ),
       }
     );
 
@@ -29,12 +38,9 @@ async function getRecommendations(type: string, itemId: string) {
 function App() {
   const [collabId, setCollabId] = useState<string>("");
   const [contentId, setContentId] = useState<string>("");
-  const [collabRecommendations, setCollabRecommendations] = useState<string[]>(
-    []
-  );
-  const [contentRecommendations, setContentRecommendations] = useState<
-    string[]
-  >([]);
+
+  const [collabRecommendations, setCollabRecommendations] = useState<Recommendation[]>([]);
+  const [contentRecommendations, setContentRecommendations] = useState<Recommendation[]>([]);
 
   const fetchCollaborative = async () => {
     const result = await getRecommendations("collaborative", collabId);
@@ -43,7 +49,11 @@ function App() {
 
   const fetchContent = async () => {
     const result = await getRecommendations("content", contentId);
-    setContentRecommendations(result);
+    // You may still be getting just IDs here — handle both cases:
+    const withTitles = result.map((r: any) =>
+      typeof r === "object" ? r : { contentId: r, title: `Article ${r}` }
+    );
+    setContentRecommendations(withTitles);
   };
 
   return (
@@ -51,16 +61,14 @@ function App() {
       <h2>Select Content IDs</h2>
       <div style={{ marginBottom: "20px" }}>
         <label>
-          Collaborative Content ID:
+          Collaborative Person ID:
           <input
             type="text"
             value={collabId}
             onChange={(e) => setCollabId(e.target.value)}
             style={{ margin: "0 10px" }}
           />
-          <button onClick={fetchCollaborative}>
-            Get Collaborative Recommendations
-          </button>
+          <button onClick={fetchCollaborative}>Get Collaborative Recommendations</button>
         </label>
         <br />
         <br />
@@ -98,13 +106,13 @@ function App() {
           <tr>
             <td>Collaborative</td>
             {collabRecommendations.map((item, index) => (
-              <td key={index}>{item}</td>
+              <td key={index}>{item.title}</td>
             ))}
           </tr>
           <tr>
             <td>Content</td>
             {contentRecommendations.map((item, index) => (
-              <td key={index}>{item}</td>
+              <td key={index}>{item.title}</td>
             ))}
           </tr>
         </tbody>
